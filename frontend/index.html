@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <script src="https://x.klarnacdn.net/kp/lib/v1/api.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.6.10/dist/vue.js"></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    
+    <title>KP Demo</title>
+</head>
+<body>
+    
+    <script type="text/javascript">window.klarnaAsyncCallback = function () { }</script>
+    <div id="app">
+        <div>{{message}}</div>
+        <h1>KP Demo {{message}}</h1>
+        
+        <button id="createSession" @click="createSession">Create KP Session</button>
+        <button id="authorize">Authorize</button>
+        <button id="buy">Place Order</button>
+    </div>
+    
+    <div class="row">
+            <div class="container">
+                <div id="klarna-container" style="border: dotted indianred 1px; width: 100px; height: 100px"></div>
+            </div>
+        </div>
+    
+    <script defer src="../frontend/js/app.js"></script>
+</body>
+</html>
