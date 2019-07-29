@@ -72,11 +72,19 @@ let vm = new Vue({
         placeOrder(authToken) {
             let vm = this;
             let options = {
-                url="http://localhost:1818/place-order",
-                method="get",
-                data=vm.userData
-            },
-            axios(options).then().catch();
+                url: "http://localhost:1818/place-order",
+                method: "post",
+                data: {userData: vm.userData, authToken: vm.authToken}
+            };
+            axios(options)
+            .then((response)=>{
+                console.log("Frontend placeOrder went through successfully!");
+                console.log(response);
+            })
+            .catch((error) => {
+                console.log("There's been an error with the Frontend placeOrder:");
+                console.log(error);
+            });
         }
     },
 
