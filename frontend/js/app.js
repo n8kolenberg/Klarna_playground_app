@@ -37,18 +37,19 @@ let vm = new Vue({
     },
     methods: {
         createSession() {
+            let vm = this;
             let options = {
                 url: "http://localhost:1818/create-session",
                 method: "post",
-                data: this.userData
-            }
+                data: vm.userData
+            };
             axios(options)
             .then((response)=>{
                 console.log(`Front End request went through successfully!`);
                 console.log(response);
                 //Storing the client_token and payment_method_categories in our data
-                this.clientToken = response.data.client_token;
-                this.payment_method_categories = response.data.payment_method_categories;
+                vm.clientToken = response.data.client_token;
+                vm.payment_method_categories = response.data.payment_method_categories;
             })
             .catch((error) => {
                 console.log(`Front End request went wrong:`);
@@ -59,12 +60,23 @@ let vm = new Vue({
         authorize() {
             let vm = this;
             Klarna.Payments.authorize({
-                payment_method_category: this.payment_method_categories[0]['identifier']
+                payment_method_category: vm.payment_method_categories[0]['identifier']
             }, vm.userData, 
             (res) => {
+                //This function authorizes the user and should return the authorization_token, which we'll store in the front end and provide to the backend.
                 console.log(res);
                 res.approved ? vm.authToken = res.authorization_token : console.log("Something gone wrong with authorization of purchase");
-            }); 
+            });
+        },
+
+        placeOrder(authToken) {
+            let vm = this;
+            let options = {
+                url="http://localhost:1818/place-order",
+                method="get",
+                data=vm.userData
+            },
+            axios(options).then().catch();
         }
     },
 
