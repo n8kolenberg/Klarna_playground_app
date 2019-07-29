@@ -32,7 +32,7 @@
                 <div class="mx-auto">
                     <button id="createSession" class="btn btn-dark" @click="createSession">Create KP Session</button>
                 
-                    <button id="authorize" class="btn btn-light">Authorize</button>            
+                    <button id="authorize" class="btn btn-light" @click="authorize">Authorize</button>            
                     
                     <button id="buy" class="btn btn-info">Place Order</button>    
                 </div>
@@ -42,7 +42,11 @@
         </div>
         <div class="row">
             <div class="mx-auto">
-                <div id="klarna-container" style="border: dotted indianred 1px; width: 500px; height: 500px"></div>
+                <div v-if="payment_method_categories" class="row pb-1">
+                    <h3 class="col-9 align-self-center">{{payment_method_categories[0]['name']}}</h3>
+                    <img class="col-3 align-self-center" :src="payment_method_categories[0]['asset_urls']['descriptive']" alt="">
+                </div>
+                <div id="klarna-container" style="border: dotted indianred 1px; width: 650px; height: 300px"></div>
             </div>
 
         </div>

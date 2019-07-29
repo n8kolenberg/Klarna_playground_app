@@ -1,44 +1,46 @@
-let app = new Vue({
+let vm = new Vue({
     el: "#app",
     data: {
         message: "Hello Vue1",
         clientToken: "",
-        payment_method_categories: ""
+        authToken: "",
+        payment_method_categories: "",
+        userData: {
+            "billing_address" : {
+                "given_name": "N8",
+                "family_name": "Koli",
+                "email": "n8koli@gmail.com",
+                "title": "Mr",
+                "street_address": "Kralingse Kerklaan 356",
+                "postal_code": "3067 AX",
+                "city": "Rotterdam",
+                "phone": "728558765",
+                "country": "NL"
+            },
+            "purchase_country": "nl",
+            "purchase_currency": "EUR",
+            "locale": "en-NL",
+            "order_amount": 1000,
+            "order_tax_amount": 0,
+            "order_lines": [{
+                "type": "physical",
+                "reference": "19-402",
+                "name": "Battery Power Pack",
+                "quantity": 1,
+                "unit_price": 1000,
+                "tax_rate": 0,
+                "total_amount": 1000,
+                "total_discount_amount": 0,
+                "total_tax_amount": 0
+            }]
+        }
     },
     methods: {
         createSession() {
             let options = {
                 url: "http://localhost:1818/create-session",
                 method: "post",
-                data: {
-                    "billing_address" : {
-                        "given_name": "N8",
-                        "family_name": "Koli",
-                        "email": "n8koli@gmail.com",
-                        "title": "Mr",
-                        "street_address": "Kralingse Kerklaan 356",
-                        "postal_code": "3067 AX",
-                        "city": "Rotterdam",
-                        "phone": "728558765",
-                        "country": "NL"
-                    },
-                    "purchase_country": "nl",
-                    "purchase_currency": "EUR",
-                    "locale": "en-NL",
-                    "order_amount": 1000,
-                    "order_tax_amount": 0,
-                    "order_lines": [{
-                        "type": "physical",
-                        "reference": "19-402",
-                        "name": "Battery Power Pack",
-                        "quantity": 1,
-                        "unit_price": 1000,
-                        "tax_rate": 0,
-                        "total_amount": 1000,
-                        "total_discount_amount": 0,
-                        "total_tax_amount": 0
-                    }]
-                }
+                data: this.userData
             }
             axios(options)
             .then((response)=>{
@@ -52,6 +54,17 @@ let app = new Vue({
                 console.log(`Front End request went wrong:`);
                 console.log(error);
             });
+        },
+
+        authorize() {
+            let vm = this;
+            Klarna.Payments.authorize({
+                payment_method_category: this.payment_method_categories[0]['identifier']
+            }, vm.userData, 
+            (res) => {
+                console.log(res);
+                res.approved ? vm.authToken = res.authorization_token : console.log("Something gone wrong with authorization of purchase");
+            }); 
         }
     },
 
@@ -69,5 +82,6 @@ let app = new Vue({
                 });
             
         }
+       
     }
 });
