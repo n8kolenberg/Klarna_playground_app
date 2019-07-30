@@ -1,10 +1,11 @@
 let vm = new Vue({
     el: "#app",
     data: {
-        message: "Hello Vue1",
         clientToken: "",
         authToken: "",
         payment_method_categories: "",
+        pmcIdentifiers: [],
+
         userData: { //***Needs to be made dynamic!!*** 
             "billing_address" : {
                 "given_name": "N8",
@@ -38,6 +39,7 @@ let vm = new Vue({
     methods: {
         createSession() {
             let vm = this;
+            
             let options = {
                 url: "http://localhost:1818/create-session",
                 method: "post",
@@ -47,9 +49,14 @@ let vm = new Vue({
             .then((response)=>{
                 console.log(`Front End request went through successfully!`);
                 console.log(response);
-                //Storing the client_token and payment_method_categories in our data
+                //Reset the PaymentMethod Identifiers from last session:
+                vm.pmcIdentifiers = [];
+                //Storing the client_token and payment_method_categories + the identifiers in our data
                 vm.clientToken = response.data.client_token;
                 vm.payment_method_categories = response.data.payment_method_categories;
+                vm.payment_method_categories.forEach((payment_method)=>{
+                    vm.pmcIdentifiers.push(payment_method.identifier);
+                });
             })
             .catch((error) => {
                 console.log(`Front End request went wrong:`);
@@ -92,6 +99,27 @@ let vm = new Vue({
                 console.log("There's been an error with the Frontend placeOrder:");
                 console.log(error);
             });
+        },
+
+        loadKlarnaPaymentCategories(categories) {
+            Klarna.Payments.load({
+                container: "#klarna-container",
+                payment_method_categories: categories,
+                instance_id: '123'
+            }, (response)=>{
+                console.log("Payment widget should be loaded now");
+                console.log(response);
+            });
+        },
+
+        loadKlarnaPaymentCategory(category) {
+            Klarna.Payments.load({
+                container: "#klarna-container-pay-later",
+                payment_method_category: category
+            }, (response)=>{
+                console.log("Payment widget should be loaded now");
+                console.log(response);
+            });
         }
     },
 
@@ -100,15 +128,20 @@ let vm = new Vue({
         clientToken() {
             Klarna.Payments.init({
                 client_token: this.clientToken 
-            })
-            Klarna.Payments.load({
-                container: '#klarna-container',
-                payment_method_category: 'pay_later' //***Needs to be made dynamic!!***
-            }, (response) => {
-                console.log("Payment widget should be loaded now")
-                console.log(response);
+            });
+
+            //Check if there are multiple payment method categories returned by Klarna and render them together
+            //If not, only render the one that's returned
+            let payment_method_categories = [];
+            if(this.payment_method_categories.length > 1) {
+                this.payment_method_categories.forEach((val)=>{
+                    payment_method_categories.push(val.identifier);
                 });
-            
+                this.loadKlarnaPaymentCategories(payment_method_categories);
+            } else {
+                payment_method_categories = this.payment_method_categories[0]['identifier'];
+                this.loadKlarnaPaymentCategory(payment_method_categories);
+            }
         }
        
     }
