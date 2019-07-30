@@ -5,7 +5,7 @@ let vm = new Vue({
         clientToken: "",
         authToken: "",
         payment_method_categories: "",
-        userData: {
+        userData: { //***Needs to be made dynamic!!*** 
             "billing_address" : {
                 "given_name": "N8",
                 "family_name": "Koli",
@@ -63,13 +63,20 @@ let vm = new Vue({
                 payment_method_category: vm.payment_method_categories[0]['identifier']
             }, vm.userData, 
             (res) => {
-                //This function authorizes the user and should return the authorization_token, which we'll store in the front end and provide to the backend.
+                //This function authorizes the user and should return the authorization_token, which is stored in the front end and provided to the backend in the placeOrder call
                 console.log(res);
-                res.approved ? vm.authToken = res.authorization_token : console.log("Something gone wrong with authorization of purchase");
+                if(res.approved) {
+                    vm.authToken = res.authorization_token 
+                    
+                } else {
+                    console.log("Something gone wrong with authorization of purchase:");
+                    console.log(res);
+                }
             });
         },
 
         placeOrder(authToken) {
+            //Send the authToken to the place-order route in the backend to place the order with Klarna and send back the response.
             let vm = this;
             let options = {
                 url: "http://localhost:1818/place-order",
@@ -89,13 +96,14 @@ let vm = new Vue({
     },
 
     watch: {
+        //When this.clientToken changes after this.createSession is called, we initialize Klarna Payments, load the payment method category in the container
         clientToken() {
             Klarna.Payments.init({
                 client_token: this.clientToken 
             })
             Klarna.Payments.load({
                 container: '#klarna-container',
-                payment_method_category: 'pay_later'
+                payment_method_category: 'pay_later' //***Needs to be made dynamic!!***
             }, (response) => {
                 console.log("Payment widget should be loaded now")
                 console.log(response);
