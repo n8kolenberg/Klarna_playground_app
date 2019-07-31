@@ -42,18 +42,20 @@
         </div>
         <div class="row">
             <div class="mx-auto">
-                <div v-if="payment_method_categories" class="row pb-1">
-                    <h3 class="col-9 align-self-center">{{payment_method_categories[0]['name']}}</h3>
-                    <img class="col-3 align-self-center" :src="payment_method_categories[0]['asset_urls']['descriptive']" alt="">
-                </div>
-                <div id="klarna-container-pay-later" style="border: dotted indianred 1px; width: 650px; height: 300px"></div>
-                <div id="klarna-container-pay-over-time" style="border: dotted indianred 1px; width: 650px; height: 300px" ></div>
-                <div id="klarna-container-pay-now" style="border: dotted indianred 1px; width: 650px; height: 300px" ></div>
+                <div v-for="pmcIdentifier in pmcIdentifiers">
+                    <div class="col-sm-3">
+                        <h3 class="flex-left">{{pmcIdentifier.name}}</h3>
+                        <img class="float-right" :src="pmcIdentifier.badge" alt="Klarna Badge">
+                    </div>
+                    <div class="col-sm-9">
+                        <div :id="pmcIdentifier.identifier" style="border: 1px indianred dotted;"></div>
+                    </div>
 
+                    
             </div>
 
-        </div>
-        </div>
+        </div> <!--end row-->
+        </div> <!--end app-->
     </div>
     
     
