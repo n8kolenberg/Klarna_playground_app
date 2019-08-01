@@ -38,8 +38,7 @@
                     <button id="createSession" class="btn btn-dark" @click="createSession">Create KP Session</button>
 
                     <button id="authorize" class="btn btn-light" @click="authorize"
-                        v-if="clientToken">Authorize</button>
-
+                        v-if="payment_methods_loaded">Authorize</button>
                     <button id="buy" class="btn btn-info" @click="placeOrder" v-if="authToken">Place Order</button>
                 </div>
                 <!--end mx-auto-->

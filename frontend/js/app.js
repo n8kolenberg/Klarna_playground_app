@@ -6,6 +6,7 @@ let vm = new Vue({
         payment_method_categories: "",
         pmcIdentifiers: [],
         order_id: "",
+        payment_methods_loaded: false,
 
         userData: { //***Needs to be made dynamic!!*** 
             "billing_address" : {
@@ -108,13 +109,13 @@ let vm = new Vue({
         },
 
         loadKlarnaPaymentCategory(category) {
-            console.log(`#${category}`)
             Klarna.Payments.load({
                 container: `#${category}`,
                 payment_method_category: category
             }, (response)=>{
                 console.log("Payment widget should be loaded now");
                 console.log(response);
+                this.payment_methods_loaded = true;
             });
         }
     },
