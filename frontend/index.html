@@ -59,10 +59,15 @@
             <!--end v-for div-->
 
             <div class="row">
-                <div class="mx-auto bg-warning">
+                <div class="mx-auto bg-warning message-board">
                     <template v-if="order_id">
                         <h1 style="color: indianred">Purchase Confirmation</h1>
                         <div class="text-center">Order ID: {{order_id}}</div>
+                    </template>
+                    <template v-if="klarnaResponse">
+                        <div>
+                            <pre class="pre-scrollable">{{klarnaResponse}}</pre>
+                        </div>
                     </template>
 
                 </div>
@@ -70,11 +75,8 @@
         </div>
         <!--end container-fluid-->
 
-
     </div>
     <!--end app-->
-
-
 
     <script defer src="../frontend/js/app.js"></script>
 </body>

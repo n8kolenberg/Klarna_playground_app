@@ -7,6 +7,7 @@ let vm = new Vue({
         pmcIdentifiers: [],
         order_id: "",
         payment_methods_loaded: false,
+        klarnaResponse: {},
 
         userData: { //***Needs to be made dynamic!!*** 
             "billing_address" : {
@@ -51,6 +52,7 @@ let vm = new Vue({
             .then((response)=>{
                 console.log(`Front End request went through successfully!`);
                 console.log(response);
+                vm.klarnaResponse = response;
                 //Reset the PaymentMethod Identifiers from last session:
                 vm.pmcIdentifiers = [];
                 //Storing the client_token and payment_method_categories + the identifiers + name + asset urls in our data
@@ -67,6 +69,7 @@ let vm = new Vue({
             .catch((error) => {
                 console.log(`Front End request went wrong:`);
                 console.log(error);
+                vm.klarnaResponse = error;
             });
         },
 
@@ -100,11 +103,12 @@ let vm = new Vue({
             .then((response)=>{
                 console.log("Frontend placeOrder went through successfully!");
                 console.log(response);
-                this.order_id = response.data.order_id;
+                vm.order_id = response.data.order_id;
             })
             .catch((error) => {
                 console.log("There's been an error with the Frontend placeOrder:");
                 console.log(error);
+                vm.klarnaResponse = error;
             });
         },
 
