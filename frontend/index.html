@@ -50,9 +50,9 @@
 
             <div class="row" v-for="pmcIdentifier in pmcIdentifiers">
                 <div class="col-sm-6 mx-auto">
-                    <div>
-                        <h3 class="float-left">{{pmcIdentifier.name}}</h3>
-                        <img class="float-right" :src="pmcIdentifier.badge" alt="Klarna Badge">
+                    <div class="bg-light clearfix">
+                        <h3 class="">{{pmcIdentifier.name}}</h3>
+                        <img class="float-right alig-self-middle" :src="pmcIdentifier.badge" alt="Klarna Badge">
                     </div>
                     <div :id="pmcIdentifier.identifier" style="border: 1px indianred dotted;"></div>
                 </div>
@@ -60,10 +60,13 @@
             <!--end v-for div-->
 
             <div class="row">
-                <template v-if="order_id">
-                    <h1>Purchase Confirmation</h1>
-                    <div class="col-sm-4">{{order_id}}</div>
-                </template>
+                <div class="mx-auto bg-warning">
+                    <template v-if="order_id">
+                        <h1 style="color: indianred">Purchase Confirmation</h1>
+                        <div class="text-center">Order ID: {{order_id}}</div>
+                    </template>
+
+                </div>
             </div>
         </div>
         <!--end container-fluid-->
