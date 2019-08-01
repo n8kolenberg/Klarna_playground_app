@@ -48,24 +48,31 @@
 
 
             <div class="row" v-for="pmcIdentifier in pmcIdentifiers">
-                <div class="col-sm-6 mx-auto">
+                <div class="col-sm-6 mx-auto pt-5">
                     <div class="bg-light clearfix">
                         <h3 class="">{{pmcIdentifier.name}}</h3>
-                        <img class="float-right alig-self-middle" :src="pmcIdentifier.badge" alt="Klarna Badge">
+                        <img class="float-right align-self-middle" :src="pmcIdentifier.badge" alt="Klarna Badge">
                     </div>
                     <div :id="pmcIdentifier.identifier" style="border: 1px indianred dotted;"></div>
                 </div>
             </div>
             <!--end v-for div-->
 
-            <div class="row">
-                <div class="mx-auto bg-warning message-board">
+            <!--Klarna Responses-->
+            <div class="row pt-5 pb-5">
+                <div class="mx-auto bg-warning message-board col-sm-9">
                     <template v-if="order_id">
-                        <h1 style="color: indianred">Purchase Confirmation</h1>
+                        <h3 style="color: indianred">Purchase Confirmation</h3>
                         <div class="text-center">Order ID: {{order_id}}</div>
+                    </template>
+                    <template v-if="authToken">
+                        <div>
+                            <h3>Authorization token: {{authToken}}</h3>
+                        </div>                        
                     </template>
                     <template v-if="klarnaResponse">
                         <div>
+                            <h3>Klarna Response: </h3>
                             <pre class="pre-scrollable">{{klarnaResponse}}</pre>
                         </div>
                     </template>

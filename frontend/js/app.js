@@ -7,7 +7,7 @@ let vm = new Vue({
         pmcIdentifiers: [],
         order_id: "",
         payment_methods_loaded: false,
-        klarnaResponse: {},
+        klarnaResponse: "",
 
         userData: { //***Needs to be made dynamic!!*** 
             "billing_address" : {
@@ -39,8 +39,10 @@ let vm = new Vue({
             }]
         }
     },
+
     methods: {
         createSession() {
+            this.clearKlarnaResponse();
             let vm = this;
             
             let options = {
@@ -74,6 +76,7 @@ let vm = new Vue({
         },
 
         authorize() {
+            this.clearKlarnaResponse();
             let vm = this;
             Klarna.Payments.authorize({
                 payment_method_category: vm.payment_method_categories[0]['identifier']
@@ -92,6 +95,7 @@ let vm = new Vue({
         },
 
         placeOrder(authToken) {
+            this.clearKlarnaResponse();
             //Send the authToken to the place-order route in the backend to place the order with Klarna and send back the response.
             let vm = this;
             let options = {
@@ -121,6 +125,11 @@ let vm = new Vue({
                 console.log(response);
                 this.payment_methods_loaded = true;
             });
+        },
+
+        clearKlarnaResponse() {
+            this.klarnaResponse = "";
+            this.order_id = "";
         }
     },
 
@@ -140,6 +149,7 @@ let vm = new Vue({
 
             }, 10)
         }
-       
-    }
+    },
+
+    
 });
