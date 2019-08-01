@@ -5,6 +5,7 @@ let vm = new Vue({
         authToken: "",
         payment_method_categories: "",
         pmcIdentifiers: [],
+        order_id: "",
 
         userData: { //***Needs to be made dynamic!!*** 
             "billing_address" : {
@@ -98,6 +99,7 @@ let vm = new Vue({
             .then((response)=>{
                 console.log("Frontend placeOrder went through successfully!");
                 console.log(response);
+                this.order_id = response.data.order_id;
             })
             .catch((error) => {
                 console.log("There's been an error with the Frontend placeOrder:");
@@ -124,18 +126,8 @@ let vm = new Vue({
                 client_token: this.clientToken 
             });
 
-            //Check if there are multiple payment method categories returned by Klarna and render them together
-            //If not, only render the one that's returned
-            // let payment_method_categories = [];
-            // if(this.payment_method_categories.length > 1) {
-            //     this.payment_method_categories.forEach((val)=>{
-            //         payment_method_categories.push(val.identifier);
-            //     });
-            //     this.loadKlarnaPaymentCategories(payment_method_categories);
-            // } else {
-            //     payment_method_categories = this.payment_method_categories[0]['identifier'];
-            //     this.loadKlarnaPaymentCategory(payment_method_categories);
-            // }
+            //Setting timeout so that the containers load into the html and then we load the payment method categories in them
+            //For each payment_method_category (pmc), we call the load function with the respective container
             setTimeout(()=>{
                 this.pmcIdentifiers.forEach((pmc)=>{
                     this.loadKlarnaPaymentCategory(pmc.identifier);
