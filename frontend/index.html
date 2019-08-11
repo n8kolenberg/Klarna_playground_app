@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,50 +8,84 @@
     <script src="https://x.klarnacdn.net/kp/lib/v1/api.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/vue@2.6.10/dist/vue.js"></script>
     <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
-    
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+        integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+
     <title>KP Demo</title>
 </head>
+
 <body>
-    
-    <script type="text/javascript">window.klarnaAsyncCallback = function () { }</script>
+
+    <script type="text/javascript">
+        window.klarnaAsyncCallback = function () {}
+    </script>
     <div id="app">
-        
+
         <section class="jumbotron jumbotron-fluid">
-                <div class="container is-fluid">
-                    <h1 class="display-4">
+            <div class="container is-fluid">
+                <h1 class="display-4">
                     Klarna Payments Playground
-                    </h1>
-                    <p class="lead">
+                </h1>
+                <p class="lead">
                     Test out Klarna Payments with your playground credentials
-                    </p>
-                </div>
+                </p>
+            </div>
         </section>
-    
+
         <div class="container-fluid">
             <div class="row pb-4 pt-4">
                 <div class="mx-auto">
                     <button id="createSession" class="btn btn-dark" @click="createSession">Create KP Session</button>
-                
-                    <button id="authorize" class="btn btn-light">Authorize</button>            
-                    
-                    <button id="buy" class="btn btn-info">Place Order</button>    
+
+                    <button id="authorize" class="btn btn-light" @click="authorize"
+                        v-if="payment_methods_loaded">Authorize</button>
+                    <button id="buy" class="btn btn-info" @click="placeOrder" v-if="authToken">Place Order</button>
                 </div>
-         
+                <!--end mx-auto-->
             </div>
+            <!--end row-->
 
-        </div>
-        <div class="row">
-            <div class="mx-auto">
-                <div id="klarna-container" style="border: dotted indianred 1px; width: 500px; height: 500px"></div>
+
+
+            <div class="row" v-for="pmcIdentifier in pmcIdentifiers">
+                <div class="col-sm-6 mx-auto pt-5">
+                    <div class="bg-light clearfix">
+                        <h3 class="">{{pmcIdentifier.name}}</h3>
+                        <img class="float-right align-self-middle" :src="pmcIdentifier.badge" alt="Klarna Badge">
+                    </div>
+                    <div :id="pmcIdentifier.identifier" style="border: 1px indianred dotted;"></div>
+                </div>
             </div>
+            <!--end v-for div-->
 
+            <!--Klarna Responses-->
+            <div class="row pt-5 pb-5">
+                <div class="mx-auto bg-warning message-board col-sm-9">
+                    <template v-if="order_id">
+                        <h3 style="color: indianred">Purchase Confirmation</h3>
+                        <div class="text-center">Order ID: {{order_id}}</div>
+                    </template>
+                    <template v-if="authToken">
+                        <div>
+                            <h3>Authorization token: {{authToken}}</h3>
+                        </div>                        
+                    </template>
+                    <template v-if="klarnaResponse">
+                        <div>
+                            <h3>Klarna Response: </h3>
+                            <pre class="pre-scrollable">{{klarnaResponse}}</pre>
+                        </div>
+                    </template>
+
+                </div>
+            </div>
         </div>
-        </div>
+        <!--end container-fluid-->
+
     </div>
-    
-    
-    
+    <!--end app-->
+
     <script defer src="../frontend/js/app.js"></script>
 </body>
+
 </html>
