@@ -9,10 +9,12 @@ const cors = require('./backend/cors');
 require('dotenv').config();
 
 //App settings
-const port = process.env.PORT || 3000;
+const port = process.env.PORT || 1818;
 app.use(cors());
 app.use(express.json());
-app.use(express.urlencoded({extended: true}));
+app.use(express.urlencoded({
+    extended: true
+}));
 
 
 //Routes
@@ -22,7 +24,7 @@ app.use('/place-order', placeOrder);
 
 //Listen
 app.listen(port, () => {
-console.log(`KP app listening on ${port}`);
+    console.log(`KP app listening on ${port}`);
 });
 
 
