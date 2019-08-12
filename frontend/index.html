@@ -10,8 +10,17 @@
     <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
         integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+        integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous">
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
+        integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous">
+    </script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
+        integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous">
+    </script>
 
-    <title>KP Demo</title>
+    <title>Klarna Payments Demo</title>
 </head>
 
 <body>
@@ -19,64 +28,94 @@
     <script type="text/javascript">
         window.klarnaAsyncCallback = function () {}
     </script>
+
     <div id="app">
-
-        <section class="jumbotron jumbotron-fluid">
-            <div class="container is-fluid">
-                <h1 class="display-4">
-                    Klarna Payments Playground
-                </h1>
-                <p class="lead">
-                    Test out Klarna Payments with your playground credentials
-                </p>
-            </div>
-        </section>
-
+        <ul class="nav justify-content-center">
+            <li class="nav-item">
+                <a class="nav-link active" href="#">Klarna Payments</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#">Klarna Checkout</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#">Instant Shopping</a>
+            </li>
+        </ul>
         <div class="container-fluid">
-            <div class="row pb-4 pt-4">
-                <div class="mx-auto">
-                    <button id="createSession" class="btn btn-dark" @click="createSession">Create KP Session</button>
+            <div class="row pb-4 pt-4 justify-content-center">
+                <button id="createSession" class="btn btn-dark" @click="createSession">Create KP Session</button>
 
-                    <button id="authorize" class="btn btn-light" @click="authorize"
-                        v-if="payment_methods_loaded">Authorize</button>
-                    <button id="buy" class="btn btn-info" @click="placeOrder" v-if="authToken">Place Order</button>
-                </div>
+                <button id="authorize" class="btn btn-light" @click="authorize"
+                    v-if="payment_methods_loaded">Authorize</button>
+                <button id="buy" class="btn btn-info" @click="placeOrder" v-if="authToken">Place Order</button>
                 <!--end mx-auto-->
             </div>
             <!--end row-->
 
-
-
-            <div class="row" v-for="pmcIdentifier in pmcIdentifiers">
-                <div class="col-sm-6 mx-auto pt-5">
-                    <div class="bg-light clearfix">
-                        <h3 class="">{{pmcIdentifier.name}}</h3>
-                        <img class="float-right align-self-middle" :src="pmcIdentifier.badge" alt="Klarna Badge">
+            <div class="row justify-content-between" v-for="pmcIdentifier in pmcIdentifiers">
+                <div class="col-sm-12 col-md-6 mx-auto pt-5">
+                    <div class="card">
+                        <div class="card-header">
+                            {{pmcIdentifier.name}}
+                            <img class="float-right align-self-middle" :src="pmcIdentifier.badge" alt="Klarna Badge">
+                        </div>
+                        <div class="card-body">
+                            <div :id="pmcIdentifier.identifier"></div>
+                            <a href="#" class="btn btn-light" @click="authAndPlaceOrder">Buy</a>
+                        </div>
                     </div>
-                    <div :id="pmcIdentifier.identifier" style="border: 1px indianred dotted;"></div>
                 </div>
             </div>
             <!--end v-for div-->
 
+            <!-- <div class="card">
+                <div class="card-header">
+                    Featured
+                </div>
+                <div class="card-body">
+                    <h5 class="card-title">Special title treatment</h5>
+                    <p class="card-text">With supporting text below as a natural lead-in to additional content.</p>
+                    <a href="#" class="btn btn-primary">Go somewhere</a>
+                </div>
+            </div> -->
+
+
+
+
+
+
+
             <!--Klarna Responses-->
-            <div class="row pt-5 pb-5">
-                <div class="mx-auto bg-warning message-board col-sm-9">
+            <div class="row pt-5 pb-5 justify-content-center">
+                <div class="col-sm-12 col-md-8">
                     <template v-if="order_id">
-                        <h3 style="color: indianred">Purchase Confirmation</h3>
-                        <div class="text-center">Order ID: {{order_id}}</div>
+                        <div class="alert alert-success alert-dismissable fade show" role="alert">
+                            <button class="close" data-dismiss="alert">
+                                <span aria-hidden="true"> &times; </span>
+                            </button>
+                            <h3 style="color: indianred" class="alert-heading">Purchase Confirmation</h3>
+                            <pre class="alert-body">Order ID: {{order_id}}</pre>
+                        </div>
                     </template>
                     <template v-if="authToken">
-                        <div>
-                            <h3>Authorization token: {{authToken}}</h3>
-                        </div>                        
+                        <div class="alert alert-info alert-dismissable fade show">
+                            <button class="close" data-dismiss="alert">
+                                <span aria-hidden="true"> &times; </span>
+                            </button>
+                            <h3 class="alert-heading">Authorization token: </h3>
+                            <pre class="alert-body">{{authToken}}</pre>
+                        </div>
                     </template>
                     <template v-if="klarnaResponse">
-                        <div>
-                            <h3>Klarna Response: </h3>
+                        <div class="alert alert-secondary alert-dismissable fade show">
+                            <button class="close" data-dismiss="alert">
+                                <span aria-hidden="true"> &times; </span>
+                            </button>
+                            <h3 class="alert-heading">Klarna Response: </h3>
                             <pre class="pre-scrollable">{{klarnaResponse}}</pre>
                         </div>
                     </template>
-
+                    <!--End alert-->
                 </div>
             </div>
         </div>
@@ -86,6 +125,7 @@
     <!--end app-->
 
     <script defer src="../frontend/js/app.js"></script>
+
 </body>
 
 </html>
