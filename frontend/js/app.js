@@ -10,7 +10,7 @@ let vm = new Vue({
         klarnaResponse: "",
 
         userData: { //***Needs to be made dynamic!!*** 
-            "billing_address" : {
+            "billing_address": {
                 "given_name": "N8",
                 "family_name": "Koli",
                 "email": "n8koli@gmail.com",
@@ -44,54 +44,54 @@ let vm = new Vue({
         createSession() {
             this.clearKlarnaResponse();
             let vm = this;
-            
+
             let options = {
                 url: "http://localhost:1818/create-session",
                 method: "post",
                 data: vm.userData
             };
             axios(options)
-            .then((response)=>{
-                console.log(`Front End request went through successfully!`);
-                console.log(response);
-                vm.klarnaResponse = response;
-                //Reset the PaymentMethod Identifiers from last session:
-                vm.pmcIdentifiers = [];
-                //Storing the client_token and payment_method_categories + the identifiers + name + asset urls in our data
-                vm.clientToken = response.data.client_token;
-                vm.payment_method_categories = response.data.payment_method_categories;
-                vm.payment_method_categories.forEach((payment_method)=>{
-                    vm.pmcIdentifiers.push({
-                        identifier: payment_method.identifier,
-                        badge: payment_method.asset_urls.standard,
-                        name: payment_method.name
+                .then((response) => {
+                    console.log(`Front End request went through successfully!`);
+                    console.log(response);
+                    vm.klarnaResponse = response;
+                    //Reset the PaymentMethod Identifiers from last session:
+                    vm.pmcIdentifiers = [];
+                    //Storing the client_token and payment_method_categories + the identifiers + name + asset urls in our data
+                    vm.clientToken = response.data.client_token;
+                    vm.payment_method_categories = response.data.payment_method_categories;
+                    vm.payment_method_categories.forEach((payment_method) => {
+                        vm.pmcIdentifiers.push({
+                            identifier: payment_method.identifier,
+                            badge: payment_method.asset_urls.standard,
+                            name: payment_method.name
+                        });
                     });
+                })
+                .catch((error) => {
+                    console.log(`Front End request went wrong:`);
+                    console.log(error);
+                    vm.klarnaResponse = error;
                 });
-            })
-            .catch((error) => {
-                console.log(`Front End request went wrong:`);
-                console.log(error);
-                vm.klarnaResponse = error;
-            });
         },
 
         authorize() {
             this.clearKlarnaResponse();
             let vm = this;
             Klarna.Payments.authorize({
-                payment_method_category: vm.payment_method_categories[0]['identifier']
-            }, vm.userData, 
-            (res) => {
-                //This function authorizes the user and should return the authorization_token, which is stored in the front end and provided to the backend in the placeOrder call
-                console.log(res);
-                if(res.approved) {
-                    vm.authToken = res.authorization_token 
-                    
-                } else {
-                    console.log("Something gone wrong with authorization of purchase:");
+                    payment_method_category: vm.payment_method_categories[0]['identifier']
+                }, vm.userData,
+                (res) => {
+                    //This function authorizes the user and should return the authorization_token, which is stored in the front end and provided to the backend in the placeOrder call
                     console.log(res);
-                }
-            });
+                    if (res.approved) {
+                        vm.authToken = res.authorization_token
+
+                    } else {
+                        console.log("Something gone wrong with authorization of purchase:");
+                        console.log(res);
+                    }
+                });
         },
 
         placeOrder(authToken) {
@@ -101,26 +101,34 @@ let vm = new Vue({
             let options = {
                 url: "http://localhost:1818/place-order",
                 method: "post",
-                data: {userData: vm.userData, authToken: vm.authToken}
+                data: {
+                    userData: vm.userData,
+                    authToken: vm.authToken
+                }
             };
             axios(options)
-            .then((response)=>{
-                console.log("Frontend placeOrder went through successfully!");
-                console.log(response);
-                vm.order_id = response.data.order_id;
-            })
-            .catch((error) => {
-                console.log("There's been an error with the Frontend placeOrder:");
-                console.log(error);
-                vm.klarnaResponse = error;
-            });
+                .then((response) => {
+                    console.log("Frontend placeOrder went through successfully!");
+                    console.log(response);
+                    vm.order_id = response.data.order_id;
+                })
+                .catch((error) => {
+                    console.log("There's been an error with the Frontend placeOrder:");
+                    console.log(error);
+                    vm.klarnaResponse = error;
+                });
+        },
+
+        authAndPlaceOrder() {
+            this.authorize();
+            this.placeOrder(this.authToken);
         },
 
         loadKlarnaPaymentCategory(category) {
             Klarna.Payments.load({
                 container: `#${category}`,
                 payment_method_category: category
-            }, (response)=>{
+            }, (response) => {
                 console.log("Payment widget should be loaded now");
                 console.log(response);
                 this.payment_methods_loaded = true;
@@ -137,13 +145,13 @@ let vm = new Vue({
         //When this.clientToken changes after this.createSession is called, we initialize Klarna Payments, load the payment method category in the container
         clientToken() {
             Klarna.Payments.init({
-                client_token: this.clientToken 
+                client_token: this.clientToken
             });
 
             //Setting timeout so that the containers load into the html and then we load the payment method categories in them
             //For each payment_method_category (pmc), we call the load function with the respective container
-            setTimeout(()=>{
-                this.pmcIdentifiers.forEach((pmc)=>{
+            setTimeout(() => {
+                this.pmcIdentifiers.forEach((pmc) => {
                     this.loadKlarnaPaymentCategory(pmc.identifier);
                 });
 
@@ -151,5 +159,5 @@ let vm = new Vue({
         }
     },
 
-    
+
 });
