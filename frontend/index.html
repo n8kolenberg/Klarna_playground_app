@@ -19,6 +19,12 @@
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
         integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous">
     </script>
+    <!--For response syntax highlighting-->
+    <!-- <link rel="stylesheet" href="https://unpkg.com/prismjs/themes/prism.css" />
+    <script src="https://unpkg.com/prismjs"></script> -->
+    
+    
+    
 
     <title>Klarna Payments Demo</title>
 </head>
@@ -48,46 +54,40 @@
                 <button id="authorize" class="btn btn-light" @click="authorize"
                     v-if="payment_methods_loaded">Authorize</button>
                 <button id="buy" class="btn btn-info" @click="placeOrder" v-if="authToken">Place Order</button>
-                <!--end mx-auto-->
             </div>
             <!--end row-->
 
-            <div class="row justify-content-between" v-for="pmcIdentifier in pmcIdentifiers">
-                <div class="col-sm-12 col-md-6 mx-auto pt-5">
-                    <div class="card">
-                        <div class="card-header">
-                            {{pmcIdentifier.name}}
-                            <img class="float-right align-self-middle" :src="pmcIdentifier.badge" alt="Klarna Badge">
-                        </div>
-                        <div class="card-body">
-                            <div :id="pmcIdentifier.identifier"></div>
-                            <a href="#" class="btn btn-light" @click="authAndPlaceOrder">Buy</a>
+    <!--Accordion has dynamic identifiers added so we can use the for-loop to get the data in the data-target and ids of the elements-->
+            <div class="row justify-content-center">
+                <div class="col-sm-12 col-md-8 pt-5 justify-content-center">
+                    <div class="accordion" id="payment_methods_accordion">
+                        <div class="card" v-for="pmcIdentifier in pmcIdentifiers">
+                            <div class="card-header" :id="'heading_'+pmcIdentifier.identifier" data-toggle="collapse" :data-target="'#collapse'+pmcIdentifier.identifier" aria-expanded="false" :aria-controls="'collapse'+pmcIdentifier.identifier">
+                                <button class="btn btn-link float-left align-self-middle" type="button">
+                                        {{pmcIdentifier.name}}
+                                </button>
+                                    <img class="float-right pt-2 align-self-middle" :src="pmcIdentifier.badge" alt="Klarna Badge">
+                            </div>
+                            <div :id="'collapse'+pmcIdentifier.identifier" class="collapse" :aria-labelledby="'heading_'+pmcIdentifier.identifier" data-parent="#payment_methods_accordion">
+                                <div class="card-body">
+                                    <div :id="pmcIdentifier.identifier"></div>
+                                    <!-- Sending in the specific identifier to the authorize function so that when the user
+                                        clicks on the buy button, the authorize function is called on that specific
+                                        payment method category -->
+                                    <a href="#" class="btn btn-light" @click="authorize(pmcIdentifier.identifier)">Buy</a>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
             <!--end v-for div-->
 
-            <!-- <div class="card">
-                <div class="card-header">
-                    Featured
-                </div>
-                <div class="card-body">
-                    <h5 class="card-title">Special title treatment</h5>
-                    <p class="card-text">With supporting text below as a natural lead-in to additional content.</p>
-                    <a href="#" class="btn btn-primary">Go somewhere</a>
-                </div>
-            </div> -->
-
-
-
-
-
 
 
             <!--Klarna Responses-->
             <div class="row pt-5 pb-5 justify-content-center">
-                <div class="col-sm-12 col-md-8">
+                <div class="col-sm-12 col-md-9">
                     <template v-if="order_id">
                         <div class="alert alert-success alert-dismissable fade show" role="alert">
                             <button class="close" data-dismiss="alert">
@@ -95,6 +95,7 @@
                             </button>
                             <h3 style="color: indianred" class="alert-heading">Purchase Confirmation</h3>
                             <pre class="alert-body">Order ID: {{order_id}}</pre>
+                            <pre class="alert-body">Authorized Payment Method: {{authorized_payment_method.toUpperCase()}}</pre>
                         </div>
                     </template>
                     <template v-if="authToken">
@@ -107,12 +108,14 @@
                         </div>
                     </template>
                     <template v-if="klarnaResponse">
-                        <div class="alert alert-secondary alert-dismissable fade show">
+                        <div class="alert alert-info alert-dismissable fade show">
                             <button class="close" data-dismiss="alert">
                                 <span aria-hidden="true"> &times; </span>
                             </button>
-                            <h3 class="alert-heading">Klarna Response: </h3>
-                            <pre class="pre-scrollable">{{klarnaResponse}}</pre>
+                            <h4 class="alert-heading">Create Session Response: </h4>
+                            <pre class="pre-scrollable">
+                                {{klarnaResponse}}
+                            </pre>
                         </div>
                     </template>
                     <!--End alert-->
@@ -123,8 +126,7 @@
 
     </div>
     <!--end app-->
-
-    <script defer src="../frontend/js/app.js"></script>
+ <script src="js/app.js"></script>
 
 </body>
 
