@@ -6,6 +6,7 @@ let vm = new Vue({
         payment_method_categories: "",
         pmcIdentifiers: [],
         order_id: "",
+        authorized_payment_method: "",
         payment_methods_loaded: false,
         klarnaResponse: "",
 
@@ -75,18 +76,19 @@ let vm = new Vue({
                 });
         },
 
-        authorize() {
+        authorize(identifier) {
             this.clearKlarnaResponse();
             let vm = this;
             Klarna.Payments.authorize({
-                    payment_method_category: vm.payment_method_categories[0]['identifier']
+                    payment_method_category: identifier
                 }, vm.userData,
                 (res) => {
                     //This function authorizes the user and should return the authorization_token, which is stored in the front end and provided to the backend in the placeOrder call
                     console.log(res);
                     if (res.approved) {
                         vm.authToken = res.authorization_token
-
+                        //Once Klarna returns the auth token, we place the order with it
+                        vm.placeOrder(vm.authToken);
                     } else {
                         console.log("Something gone wrong with authorization of purchase:");
                         console.log(res);
@@ -103,25 +105,22 @@ let vm = new Vue({
                 method: "post",
                 data: {
                     userData: vm.userData,
-                    authToken: vm.authToken
+                    authToken: authToken
                 }
             };
             axios(options)
                 .then((response) => {
                     console.log("Frontend placeOrder went through successfully!");
                     console.log(response);
+                    //Adding the successful order details to variables to be shown in frontend
                     vm.order_id = response.data.order_id;
+                    vm.authorized_payment_method = response.data.authorized_payment_method.type;
                 })
                 .catch((error) => {
                     console.log("There's been an error with the Frontend placeOrder:");
                     console.log(error);
                     vm.klarnaResponse = error;
                 });
-        },
-
-        authAndPlaceOrder() {
-            this.authorize();
-            this.placeOrder(this.authToken);
         },
 
         loadKlarnaPaymentCategory(category) {
@@ -136,7 +135,6 @@ let vm = new Vue({
         },
 
         clearKlarnaResponse() {
-            this.klarnaResponse = "";
             this.order_id = "";
         }
     },
