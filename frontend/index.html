@@ -50,10 +50,6 @@
         <div class="container-fluid">
             <div class="row pb-4 pt-4 justify-content-center">
                 <button id="createSession" class="btn btn-dark" @click="createSession">Create KP Session</button>
-
-                <button id="authorize" class="btn btn-light" @click="authorize"
-                    v-if="payment_methods_loaded">Authorize</button>
-                <button id="buy" class="btn btn-info" @click="placeOrder" v-if="authToken">Place Order</button>
             </div>
             <!--end row-->
 
