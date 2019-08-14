@@ -9,7 +9,8 @@ router.use((req, res, next) => {
 
 router.post('/', (req, res) => {
 	//payload taken from frontend and comes through as req.body
-	const payload = req.body;
+    const payload = req.body;
+    //Call the Controller's createSession function with the payload and return the response
     controller.createSession(payload, (response) => {
         //Here we're sending the response to the front end
         res.send(response.data);
