@@ -9,8 +9,11 @@ let vm = new Vue({
         authorized_payment_method: "",
         payment_methods_loaded: false,
         klarnaResponse: "",
-
-        userData: { //***Needs to be made dynamic!!*** 
+        jsonUserData: {},
+        malformedJSON: false,
+        malformedJSONError: "",
+        singleSourceOfTruthData: {},
+        userData: { 
             "billing_address": {
                 "given_name": "N8",
                 "family_name": "Koli",
@@ -136,8 +139,16 @@ let vm = new Vue({
 
         clearKlarnaResponse() {
             this.order_id = "";
-        }
+        },
+
     },
+
+    mounted() {
+        //When vue instance is mounted, we stringify userData and store it in a temporary variable
+        this.jsonUserData = JSON.stringify(this.userData, undefined, 4);
+        this.singleSourceOfTruthData = this.userData;
+    },
+
 
     watch: {
         //When this.clientToken changes after this.createSession is called, we initialize Klarna Payments, load the payment method category in the container
@@ -154,6 +165,23 @@ let vm = new Vue({
                 });
 
             }, 10)
+        },
+
+        /* Watch jsonUserData for changes to catch any malformed JSON issues and log them in the console (later in Alert)
+            If all good, store them in userData so we can send that data in to the backend create KP session call */
+        jsonUserData(newValue) {
+            this.malformedJSON = false;
+            try {
+                this.userData = JSON.parse(newValue);
+                
+            } catch(err) {
+                console.log(`seems to be invalid JSON: ${err}`);
+                this.malformedJSON = true;
+                this.malformedJSONError = err;
+                //reset
+                this.jsonUserData = JSON.stringify(this.singleSourceOfTruthData, undefined, 4);
+            }
+            
         }
     },
 
