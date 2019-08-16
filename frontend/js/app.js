@@ -141,6 +141,33 @@ let vm = new Vue({
             this.order_id = "";
         },
 
+        resetUserJSONData() {
+            this.jsonUserData = JSON.stringify(this.singleSourceOfTruthData, undefined, 4);
+            this.malformedJSON = false;
+        },
+
+        syntaxHighlight(json) {
+            if (typeof json != 'string') {
+                 json = JSON.stringify(json, undefined, 4);
+            }
+            json = json.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+            return json.replace(/("(\\u[a-zA-Z0-9]{4}|\\[^u]|[^\\"])*"(\s*:)?|\b(true|false|null)\b|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?)/g, (match) => {
+                let cls = 'number';
+                if (/^"/.test(match)) {
+                    if (/:$/.test(match)) {
+                        cls = 'key';
+                    } else {
+                        cls = 'string';
+                    }
+                } else if (/true|false/.test(match)) {
+                    cls = 'boolean';
+                } else if (/null/.test(match)) {
+                    cls = 'null';
+                }
+                return '<span class="' + cls + '">' + match + '</span>';
+            });
+     }
+
     },
 
     mounted() {
@@ -170,18 +197,15 @@ let vm = new Vue({
         /* Watch jsonUserData for changes to catch any malformed JSON issues and log them in the console (later in Alert)
             If all good, store them in userData so we can send that data in to the backend create KP session call */
         jsonUserData(newValue) {
-            this.malformedJSON = false;
             try {
                 this.userData = JSON.parse(newValue);
+                this.malformedJSON = false;
                 
             } catch(err) {
                 console.log(`seems to be invalid JSON: ${err}`);
                 this.malformedJSON = true;
                 this.malformedJSONError = err;
-                //reset
-                this.jsonUserData = JSON.stringify(this.singleSourceOfTruthData, undefined, 4);
-            }
-            
+            } 
         }
     },
 

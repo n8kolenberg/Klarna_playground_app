@@ -25,6 +25,7 @@
         integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous">
     </script>
     <!--For response syntax highlighting-->
+    <link rel="stylesheet" href="css/app.css">
     <!-- <link rel="stylesheet" href="https://unpkg.com/prismjs/themes/prism.css" />
     <script src="https://unpkg.com/prismjs"></script> -->
     
@@ -71,21 +72,22 @@
                             <div class="form-group">
                                 <label for="userData">Edit the user data below</label>
                                 <!--jsonUserData is watched for changes in app.js to see if there are any malformed JSON errors-->
-                                <textarea id="userData" class="form-control" v-model="jsonUserData" rows="10">{{jsonUserData}}</textarea>
+                                <textarea id="userData" class="form-control" v-model="jsonUserData" rows="10"><code language="json">{{jsonUserData}}</code></textarea>
                                 
                             </div>
                         </form>
                     </div>
                     <div class="modal-footer">
-                        <div class="alert alert-danger alert-dismissable fade show" role="alert" v-if="malformedJSONError">
+                        <div class="alert alert-danger alert-dismissable fade show" role="alert" v-if="malformedJSON">
                             <button class="close" data-dismiss="alert">
                                 <span aria-hidden="true"> &times; </span>
                             </button>
                             <h5 class="alert-heading">{{malformedJSONError}}</h5>
                         </div>
+                        <button class="btn btn-medium btn-info" @click="resetUserJSONData">Reset Create Session Data</button>
                         <button type="button" class="btn btn-secondary" 
                         data-dismiss="modal" 
-                        data-target="demoModal" @click="createSession"> Create KP Session </button>
+                        data-target="demoModal" @click="createSession" :disabled="malformedJSON"> Create KP Session </button>
                     </div>
                 </div>
             </div>
@@ -174,7 +176,12 @@
 
     </div>
     <!--end app-->
+
+
+    <!--Syntax highlighting-->
  <script src="js/app.js"></script>
+ 
+
 
 </body>
 
