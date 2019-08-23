@@ -12,7 +12,15 @@
     <script src="https://cdn.jsdelivr.net/npm/vue@2.6.10/dist/vue.js"></script>
     <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
 
-    <!--Boostrap styling-->
+
+
+    <!--Materialize-->
+    <!-- Compiled and minified CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+    <!-- Compiled and minified JavaScript -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>            
+
+    <!-- Boostrap styling
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
         integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
@@ -23,11 +31,10 @@
     </script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
         integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous">
-    </script>
+    </script> -->
+
     <!--For response syntax highlighting-->
     <link rel="stylesheet" href="css/app.css">
-    <!-- <link rel="stylesheet" href="https://unpkg.com/prismjs/themes/prism.css" />
-    <script src="https://unpkg.com/prismjs"></script> -->
     
     
     
@@ -42,19 +49,20 @@
     </script>
 
     <div id="app">
-        <ul class="nav justify-content-center">
-            <li class="nav-item">
-                <a class="nav-link active" href="#">Klarna Payments</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="#">Klarna Checkout</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="#">Instant Shopping</a>
-            </li>
-        </ul>
 
+        <nav>
+            <div class="nav-wrapper">
+              <a href="#!" class="brand-logo center">Klarna Playground</a>
+              <ul class="left">
+                <li class="active"><a href="/">Klarna Payments</a></li>
+                <li><a href="#">Klarna Checkout [Coming soon]</a></li>
+                <li><a href="#">Instant Shopping [Coming soon]</a></li>
+              </ul>
+            </div>
+          </nav>
 
+          
+        
         <!--Modal to show user data sent in-->
         <div class="modal fade" id="demoModal">
             <div class="modal-dialog modal-lg">
@@ -94,46 +102,40 @@
         </div>
 
 
-        <div class="container-fluid">
-            <div class="row pb-4 pt-4 justify-content-center">
-                <button id="createSession" class="btn btn-dark" @click="createSession">Create KP Session</button>
-                        <button type="button" 
-                        class="btn btn-primary ml-1" 
+        <div class="container">
+            <div class="row" style="margin-top: 20px;">
+                <div class="col s12 m8">
+                        <a id="createSession" class="btn-small waves-effect waves-light" @click="createSession">Create KP Session</a>
+                        <a
+                        class="btn-small waves-effect waves-light" 
                         data-toggle="modal" 
-                        data-target="#demoModal">Show User Data</button>
+                        data-target="#demoModal">Show User Data</a>
                         <!--data-toggle=modal will allow this button to show the modal-->
                         <!--We need to define which modal will show up by specifying the modal-->
                         <!--We then use data-target="#id-of-modal". This is needed by Bootstrap's JS to 
                         understand which modal to show-->
-            </div>
-            <!--end row-->
 
-    <!--Accordion has dynamic identifiers added so we can use the for-loop to get the data in the data-target and ids of the elements-->
-            <div class="row justify-content-center">
-                <div class="col-sm-12 col-md-8 pt-5 justify-content-center">
-                    <div class="accordion" id="payment_methods_accordion">
-                        <div class="card" v-for="pmcIdentifier in pmcIdentifiers">
-                            <div class="card-header" :id="'heading_'+pmcIdentifier.identifier" data-toggle="collapse" :data-target="'#collapse'+pmcIdentifier.identifier" aria-expanded="false" :aria-controls="'collapse'+pmcIdentifier.identifier">
-                                <button class="btn btn-link float-left align-self-middle" type="button">
-                                        {{pmcIdentifier.name}}
-                                </button>
-                                    <img class="float-right pt-2 align-self-middle" :src="pmcIdentifier.badge" alt="Klarna Badge">
-                            </div>
-                            <div :id="'collapse'+pmcIdentifier.identifier" class="collapse" :aria-labelledby="'heading_'+pmcIdentifier.identifier" data-parent="#payment_methods_accordion">
-                                <div class="card-body">
-                                    <div :id="pmcIdentifier.identifier"></div>
-                                    <!-- Sending in the specific identifier to the authorize function so that when the user
-                                        clicks on the buy button, the authorize function is called on that specific
-                                        payment method category -->
-                                    <a href="#" class="btn btn-light" @click="authorize(pmcIdentifier.identifier)">Buy</a>
+
+                        <ul class="collapsible popout">
+                            <li v-for="pmcIdentifier in pmcIdentifiers">
+                                <div class="collapsible-header">{{pmcIdentifier.name}}</div>
+                                <div class="collapsible-body">
+                                    <span>
+                                        <div :id="pmcIdentifier.identifier"></div>
+                                        <!-- Sending in the specific identifier to the authorize function so that when the user
+                                                clicks on the buy button, the authorize function is called on that specific
+                                                payment method category -->
+                                        <a href="#" class="btn-small waves-effect waves-light"
+                                            @click="authorize(pmcIdentifier.identifier)">Buy</a>
+                                    </span>
                                 </div>
-                            </div>
-                        </div>
-                    </div>
+                            </li>
+                        </ul>
                 </div>
+                <div class="col s12 m4">Log</div>
             </div>
-            <!--end v-for div-->
-
+            <!--end row-->      
+    
             
             <!--Klarna Responses-->
             <div class="row pt-5 pb-5 justify-content-center">
@@ -180,6 +182,9 @@
 
     <!--Syntax highlighting-->
  <script src="js/app.js"></script>
+ <script>
+        M.AutoInit();
+</script>
  
 
 
